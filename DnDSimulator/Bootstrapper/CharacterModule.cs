@@ -14,16 +14,17 @@ namespace DnDSimulator.Bootstrapper
             builder.RegisterType<Ability>()
                 .As<IAbility>();
 
-
             builder.RegisterType<Abilities>()
                 .As<IAbilities>();
-
             builder.RegisterGeneratedFactory<Abilities.Factory>(new TypedService(typeof(IAbilities)));
 
             builder.RegisterType<Actor>()
                 .As<IActor>();
-
             builder.RegisterGeneratedFactory<Actor.Factory>(new TypedService(typeof(IActor)));
+
+            builder.RegisterType<HitPoints>()
+                .As<IHitPoints>();
+            builder.RegisterGeneratedFactory<HitPoints.Factory>(new TypedService(typeof(IHitPoints)));
 
             builder.RegisterType<Strength>()
                 .As<IStrength>();

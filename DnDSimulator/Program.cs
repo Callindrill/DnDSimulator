@@ -11,9 +11,9 @@ namespace DnDSimulator
         public static async Task Main(string[] args)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new DiceModule());
-            builder.RegisterModule(new CharacterModule());
-            builder.RegisterModule(new EncounterModule());
+            builder.RegisterModule(module: new DiceModule());
+            builder.RegisterModule(module: new CharacterModule());
+            builder.RegisterModule(module: new EncounterModule());
 
             var container = builder.Build();
 
@@ -35,27 +35,28 @@ namespace DnDSimulator
                     var actorFactory = scope.Resolve<Actor.Factory>();
 
                     var actor = actorFactory(
-                        18,
-                        60,
-                        60,
-                        3,
-                        17,
-                        15,
-                        10,
-                        10,
-                        20,
-                        20
+                        armorClass: 18,
+                        currentHitPoints: 60,
+                        maxHitPoints: 60,
+                        temporaryHitPoints:0,
+                        proficiency: 3,
+                        strength: 17,
+                        dexterity: 15,
+                        constitution: 10,
+                        intelligence: 10,
+                        wisdom: 20,
+                        charisma: 20
                     );
 
-                    Console.Write(ObjectDumper.Dump(actor));
+                    Console.Write(value: ObjectDumper.Dump(element: actor));
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(value: e);
                     throw;
                 }
 
-                Console.WriteLine("Press any key to exit...");
+                Console.WriteLine(value: "Press any key to exit...");
                 Console.ReadKey();
             }
         }

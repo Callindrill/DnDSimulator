@@ -16,11 +16,11 @@ namespace DnDSimulator.Encounter
         public IDie AttackRoll { get; set; }
         public IDice DamageRoll { get; set; }
 
-        public async Task Perform(IActor target)
+        public async Task ActAsync(IActor target)
         {
             if (await AttackRoll.RollAsync() >= target.ArmorClass)
             {
-                target.Damage(DamageRoll);
+                await target.DamageAsync(DamageRoll);
             }
         }
     }

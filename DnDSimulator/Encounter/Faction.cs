@@ -7,6 +7,6 @@ namespace DnDSimulator.Encounter
     public class Faction
     {
         public IList<Actor> Participants { get; } = new List<Actor>();
-        public bool Defeated => Participants.All(i => i.HitPoints <= 0);
+        public bool Defeated => Participants.All(i => i.HitPoints.CurrentHitPoints <= 0);
     }
 }
