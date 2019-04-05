@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DnDSimulator", "DnDSimulator\DnDSimulator.csproj", "{C510ED47-1DBC-4CA6-A233-0E29EED6B48C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DnDSimulator", "DnDSimulator\DnDSimulator.csproj", "{C510ED47-1DBC-4CA6-A233-0E29EED6B48C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F48FD88C-B5F3-440B-AC69-38C8102DCD3B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
