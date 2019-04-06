@@ -5,10 +5,6 @@ using DnDSimulator.Interfaces;
 
 namespace DnDSimulator.Encounter
 {
-    /*
-     TODO: To account for group initiative vs single initiative, I think that the "rolled" initiative will go here,
-     and that individual actors are just in a group by themselves.
-     */
     public class ActorGroup : List<IActor>, IActorGroup
     {
         public ActorGroup(Actor.Factory actorFactory)

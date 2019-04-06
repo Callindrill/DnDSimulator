@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DnDSimulator.Character;
 using DnDSimulator.Interfaces;
 
 namespace DnDSimulator.Encounter
 {
-    internal class Attack
+    internal class Attack : IAttack
     {
         public Attack(IDie attackRoll, IDamage damage)
         {
