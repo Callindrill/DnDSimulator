@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DnDSimulator.Interfaces
 {
     public interface IActorGroup : IList<IActor>
     {
+        int Initiative { get; set; }
+
         void Add(
             int armorClass,
             int currentHitPoints,
@@ -16,5 +19,7 @@ namespace DnDSimulator.Interfaces
             int intelligence,
             int wisdom,
             int charisma);
+
+        Task RollInitiativeAsync();
     }
 }

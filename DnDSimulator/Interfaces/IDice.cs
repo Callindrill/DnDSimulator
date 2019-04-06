@@ -9,5 +9,7 @@ namespace DnDSimulator.Interfaces
         Task<int> GetTotalRollAsync();
         IEnumerable<Task<int>> RollAllAsync();
         IEnumerable<int> RollAll();
+        Task<int> RollAndTakeHighestAsync(int count);
+        Task<int> RollAndTakeLowestAsync(int count);
     }
 }

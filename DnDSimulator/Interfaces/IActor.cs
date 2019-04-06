@@ -8,6 +8,8 @@ namespace DnDSimulator.Interfaces
         int Proficiency { get; set; }
         IHitPoints HitPoints { get; set; }
         IAbilities AbilityScores { get; set; }
+
+        Task<int> RollInitiativeAsync();
         Task DamageAsync(IDamage damageRoll);
         Task Heal(IDice damageRoll);
     }

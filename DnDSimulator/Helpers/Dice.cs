@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace DnDSimulator
         }
 
         private Die.Factory DieFactory { get; }
-        
+
         public void Add(int numberOfSides, int bonusToResult, bool alwaysRollsAverage)
         {
             Add(DieFactory(numberOfSides, bonusToResult, alwaysRollsAverage));
@@ -23,7 +22,7 @@ namespace DnDSimulator
 
         public async Task<int> GetTotalRollAsync()
         {
-            return (await Task.WhenAll(RollAllAsync())).Sum();
+            return (await GetRollResultsAsync()).Sum();
         }
 
         public IEnumerable<Task<int>> RollAllAsync()
@@ -33,7 +32,22 @@ namespace DnDSimulator
 
         public IEnumerable<int> RollAll()
         {
-            return (Task.WhenAll(RollAllAsync()).Result);
+            return Task.WhenAll(RollAllAsync()).Result;
+        }
+
+        public async Task<int> RollAndTakeHighestAsync(int count)
+        {
+            return (await GetRollResultsAsync()).OrderByDescending(i => i).Take(count).Sum();
+        }
+        
+        public async Task<int> RollAndTakeLowestAsync(int count)
+        {
+            return (await GetRollResultsAsync()).OrderBy(i => i).Take(count).Sum();
+        }
+
+        private async Task<IEnumerable<int>> GetRollResultsAsync()
+        {
+            return await Task.WhenAll(RollAllAsync());
         }
     }
 }
