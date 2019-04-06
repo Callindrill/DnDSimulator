@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DnDSimulator.Encounter;
 using DnDSimulator.Interfaces;
 
 namespace DnDSimulator.Character
@@ -47,20 +49,37 @@ namespace DnDSimulator.Character
         public int Proficiency { get; set; }
         public IHitPoints HitPoints { get; set; }
         public IAbilities AbilityScores { get; set; }
-        public async Task DamageAsync(IDice damageRoll)
+        public IList<DamageType> Vulnerabilities { get; } = new List<DamageType>();
+        public IList<DamageType> Resistances { get; } = new List<DamageType>();
+        public IList<DamageType> Immunities { get; } = new List<DamageType>();
+
+        public async Task DamageAsync(IDamage damage)
         {
-            var damageDealt = (await Task.WhenAll(damageRoll.RollAllAsync())).Sum();
-            //TODO: If you are resistant to the type, you'll take half of this.
+            if (IsImmune(damage.DamageType)) return;
+            var damageDealt = await damage.RollAsync();
+            if (IsResistant(damage.DamageType)) damageDealt /= 2;
+            if (IsVulnerable(damage.DamageType)) damageDealt *= 2;
             HitPoints.LoseHitPoints(damageDealt);
         }
+
+        private bool IsImmune(DamageType damageType)
+        {
+            return Immunities.Contains(damageType);
+        }
+        private bool IsResistant(DamageType damageType)
+        {
+            return Resistances.Contains(damageType);
+        }
+
+        private bool IsVulnerable(DamageType damageType)
+        {
+            return Vulnerabilities.Contains(damageType);
+        }
+
         public async Task Heal(IDice damageRoll)
         {
-            var healingDone = await FlipSignAsync((await Task.WhenAll(damageRoll.RollAllAsync())).Sum());
+            var healingDone = await damageRoll.GetTotalRollAsync();
             HitPoints.GainHitPoints(healingDone);
-        }
-        public async Task<int> FlipSignAsync(int value)
-        {
-            return await Task.Run(() =>-value);
         }
     }
 }

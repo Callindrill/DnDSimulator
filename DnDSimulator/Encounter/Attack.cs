@@ -7,20 +7,20 @@ namespace DnDSimulator.Encounter
 {
     internal class Attack
     {
-        public Attack(IDie attackRoll, IDice damageRoll)
+        public Attack(IDie attackRoll, IDamage damage)
         {
             AttackRoll = attackRoll ?? throw new ArgumentNullException(nameof(attackRoll));
-            DamageRoll = damageRoll ?? throw new ArgumentNullException(nameof(damageRoll));
+            Damage = damage ?? throw new ArgumentNullException(nameof(damage));
         }
 
         public IDie AttackRoll { get; set; }
-        public IDice DamageRoll { get; set; }
+        public IDamage Damage { get; set; }
 
         public async Task ActAsync(IActor target)
         {
             if (await AttackRoll.RollAsync() >= target.ArmorClass)
             {
-                await target.DamageAsync(DamageRoll);
+                await target.DamageAsync(Damage);
             }
         }
     }
