@@ -30,7 +30,7 @@ namespace DnDSimulator
         public async Task<int> RollAsync()
         {
             if (AlwaysRollsAverage) return await AverageAsync();
-            var dieResult = await _randomAsync.NextAsync(1, NumberOfSides);
+            var dieResult = await _randomAsync.NextAsync(1, NumberOfSides + 1);
             return dieResult + BonusToResult;
         }
 

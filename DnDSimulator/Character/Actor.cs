@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DnDSimulator.Encounter;
+using DnDSimulator.Helpers;
 using DnDSimulator.Interfaces;
 
 namespace DnDSimulator.Character
@@ -95,6 +96,39 @@ namespace DnDSimulator.Character
         private bool IsVulnerable(DamageType damageType)
         {
             return Vulnerabilities.Contains(damageType);
+        }
+
+        public async Task ActAsync(IActionDecision actionDecision)
+        {
+            //Don't care what you picked... you're hitting something. This will eventually get injected in, I'd wager.
+            //for now, everyone uses a rapier (finesse)
+            var bestModifier = Math.Max(AbilityScores.Strength.Modifier, AbilityScores.Dexterity.Modifier);
+            var damageDie = 8;
+
+            _rollableDice.Clear(); //Put down any dice you may already be holding...
+            _rollableDice.Add(
+                numberOfSides: 20,
+                bonusToResult: (bestModifier + Proficiency),
+                alwaysRollsAverage: false);
+            var attack = await _rollableDice.RollAndTakeHighestAsync(count: 1);
+            _rollableDice.Clear();
+
+            var baseRoll = attack - (bestModifier + Proficiency);
+            if (baseRoll != 1)
+            {
+                if (attack >= actionDecision.TargetActor.ArmorClass)
+                {
+                    _rollableDice.Add(numberOfSides: damageDie, bonusToResult: bestModifier, alwaysRollsAverage: false);
+                }
+                if (baseRoll == 20) //Crit!
+                {
+                    _rollableDice.Add(numberOfSides: damageDie, bonusToResult: 0, alwaysRollsAverage: false);
+                }
+
+                var damage = new Damage(_rollableDice, DamageType.Piercing);
+                await actionDecision.TargetActor.DamageAsync(damage);
+            }
+
         }
     }
 }

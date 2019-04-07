@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DnDSimulator.Behavior;
 using DnDSimulator.Interfaces;
 
 namespace DnDSimulator.Encounter
@@ -35,9 +36,16 @@ namespace DnDSimulator.Encounter
         {
             return await Task.Run(() =>
             {
+                var initiativeOrderActorGroups = Factions.SelectMany(f => f.Participants).OrderByDescending(ag => ag.Initiative);
                 do
                 {
-
+                    foreach (var actorGroup in initiativeOrderActorGroups)
+                    {
+                        foreach (var actor in actorGroup)
+                        {
+                            actor.ActAsync(actor.DecideAction(this));
+                        }
+                    }
                 } while (GetWinningFaction() == null);
                 return GetWinningFaction();
             });

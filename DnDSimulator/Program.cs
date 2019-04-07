@@ -47,6 +47,9 @@ namespace DnDSimulator
 
                     Console.WriteLine(ObjectDumper.Dump(encounter));
 
+                    await encounter.RunEncounter();
+
+                    Console.WriteLine(ObjectDumper.Dump(encounter));
 
                 }
                 catch (Exception e)
