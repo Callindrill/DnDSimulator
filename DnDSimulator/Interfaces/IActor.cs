@@ -5,6 +5,7 @@ namespace DnDSimulator.Interfaces
 {
     public interface IActor
     {
+        string Name { get; set; }
         int ArmorClass { get; set; }
         int Proficiency { get; set; }
         IHitPoints HitPoints { get; set; }

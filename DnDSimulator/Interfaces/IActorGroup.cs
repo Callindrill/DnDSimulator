@@ -8,6 +8,7 @@ namespace DnDSimulator.Interfaces
         int Initiative { get; set; }
 
         void Add(
+            string name,
             int armorClass,
             int currentHitPoints,
             int maxHitPoints,

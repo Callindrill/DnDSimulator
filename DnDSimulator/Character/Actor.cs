@@ -12,6 +12,7 @@ namespace DnDSimulator.Character
         private readonly IDice _rollableDice;
 
         public delegate Actor Factory(
+            string name,
             int armorClass,
             int currentHitPoints,
             int maxHitPoints,
@@ -25,6 +26,7 @@ namespace DnDSimulator.Character
             int charisma);
 
         public Actor(
+            string name,
             int armorClass,
             int currentHitPoints,
             int maxHitPoints,
@@ -43,6 +45,7 @@ namespace DnDSimulator.Character
             if (hitPointsFactory == null) throw new ArgumentNullException(nameof(hitPointsFactory));
             if (abilityScoreFactory == null) throw new ArgumentNullException(nameof(abilityScoreFactory));
             _rollableDice = rollableDice ?? throw new ArgumentNullException(nameof(rollableDice));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
             ArmorClass = armorClass;
             Proficiency = proficiency;
             HitPoints = hitPointsFactory(currentHitPoints, maxHitPoints, temporaryHitPoints);
@@ -53,6 +56,7 @@ namespace DnDSimulator.Character
         public IList<DamageType> Resistances { get; } = new List<DamageType>();
         public IList<DamageType> Immunities { get; } = new List<DamageType>();
 
+        public string Name { get; set; }
         public int ArmorClass { get; set; }
         public int Proficiency { get; set; }
         public IHitPoints HitPoints { get; set; }
@@ -116,19 +120,23 @@ namespace DnDSimulator.Character
             var baseRoll = attack - (bestModifier + Proficiency);
             if (baseRoll != 1)
             {
-                if (attack >= actionDecision.TargetActor.ArmorClass)
-                {
-                    _rollableDice.Add(numberOfSides: damageDie, bonusToResult: bestModifier, alwaysRollsAverage: false);
-                }
                 if (baseRoll == 20) //Crit!
                 {
                     _rollableDice.Add(numberOfSides: damageDie, bonusToResult: 0, alwaysRollsAverage: false);
+                    _rollableDice.Add(numberOfSides: damageDie, bonusToResult: bestModifier, alwaysRollsAverage: false);
+                    var damage = new Damage(_rollableDice, DamageType.Piercing);
+                    await actionDecision.TargetActor.DamageAsync(damage);
                 }
+                else if (attack >= actionDecision.TargetActor.ArmorClass)
+                {
+                    _rollableDice.Add(numberOfSides: damageDie, bonusToResult: bestModifier, alwaysRollsAverage: false);
+                    var damage = new Damage(_rollableDice, DamageType.Piercing);
+                    await actionDecision.TargetActor.DamageAsync(damage);
 
-                var damage = new Damage(_rollableDice, DamageType.Piercing);
-                await actionDecision.TargetActor.DamageAsync(damage);
+                }
             }
 
+            _rollableDice.Clear();
         }
     }
 }

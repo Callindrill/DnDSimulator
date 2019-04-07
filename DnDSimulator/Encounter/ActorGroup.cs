@@ -21,6 +21,7 @@ namespace DnDSimulator.Encounter
         public int Initiative { get; set; }
 
         public void Add(
+            string name,
             int armorClass,
             int currentHitPoints,
             int maxHitPoints,
@@ -34,6 +35,7 @@ namespace DnDSimulator.Encounter
             int charisma)
         {
             this.Add(ActorFactory(
+                name,
                 armorClass,
                 currentHitPoints,
                 maxHitPoints,

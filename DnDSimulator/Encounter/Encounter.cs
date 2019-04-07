@@ -27,14 +27,14 @@ namespace DnDSimulator.Encounter
             {
                 foreach (var factionParticipant in faction.Participants)
                 {
-                   await factionParticipant.RollInitiativeAsync();
+                    await factionParticipant.RollInitiativeAsync();
                 }
             }
         }
 
         public async Task<IFaction> RunEncounter() //TODO: Probably want to put in some kind of decision maker that will look over each actor and decide on actions.
         {
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
                 var initiativeOrderActorGroups = Factions.SelectMany(f => f.Participants).OrderByDescending(ag => ag.Initiative);
                 do
@@ -43,7 +43,9 @@ namespace DnDSimulator.Encounter
                     {
                         foreach (var actor in actorGroup)
                         {
-                            actor.ActAsync(actor.DecideAction(this));
+                            if (actor.HitPoints.CurrentHitPoints <= 0) continue;
+                            var decision = actor.DecideAction(this);
+                            if (decision != null) await actor.ActAsync(decision);
                         }
                     }
                 } while (GetWinningFaction() == null);

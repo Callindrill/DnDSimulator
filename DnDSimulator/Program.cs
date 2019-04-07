@@ -19,51 +19,56 @@ namespace DnDSimulator
 
             var container = builder.Build();
 
-            using (var scope = container.BeginLifetimeScope())
+            Console.WriteLine("Press ESC to stop");
+            do
             {
-                try
+                while (!Console.KeyAvailable)
                 {
-                    var encounter = scope.Resolve<IEncounter>();
-
-                    var blueFaction = scope.Resolve<IFaction>();
-                    var redFaction = scope.Resolve<IFaction>();
-
-                    //Put N lvl 5 actors into their own group and add that group to the appropriate faction.
-                    for (var i = 0; i < 1; i++)
+                    using (var scope = container.BeginLifetimeScope())
                     {
-                        var blueGroup = scope.Resolve<IActorGroup>();
-                        blueGroup.Add(await GetRandomActor(scope, 5));
-                        blueFaction.Participants.Add(blueGroup);
+                        try
+                        {
+                            var encounter = scope.Resolve<IEncounter>();
 
-                        var redGroup = scope.Resolve<IActorGroup>();
-                        redGroup.Add(await GetRandomActor(scope, 5));
-                        redFaction.Participants.Add(redGroup);
+                            var blueFaction = scope.Resolve<IFaction>();
+                            var redFaction = scope.Resolve<IFaction>();
+
+                            //Put N lvl 5 actors into their own group and add that group to the appropriate faction.
+                            for (var i = 0; i < 1; i++)
+                            {
+                                var blueGroup = scope.Resolve<IActorGroup>();
+                                blueGroup.Add(await GetRandomActor(scope, 5, "Sir Reginald"));
+                                blueFaction.Participants.Add(blueGroup);
+
+                                var redGroup = scope.Resolve<IActorGroup>();
+                                redGroup.Add(await GetRandomActor(scope, 5, "Nigel"));
+                                redFaction.Participants.Add(redGroup);
+                            }
+
+                            encounter.Factions.Add(blueFaction);
+                            encounter.Factions.Add(redFaction);
+
+                            await encounter.StartEncounter();
+
+                            //Console.WriteLine(ObjectDumper.Dump(encounter));
+
+                            var winner = await encounter.RunEncounter();
+
+                            //Console.WriteLine(ObjectDumper.Dump(encounter));
+
+                            Console.WriteLine($"{string.Join(", ", winner.Participants.SelectMany(p => p.Select(a => a.Name)))} Wins!");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(value: e);
+                            throw;
+                        }
                     }
-
-                    encounter.Factions.Add(blueFaction);
-                    encounter.Factions.Add(redFaction);
-
-                    await encounter.StartEncounter();
-
-                    Console.WriteLine(ObjectDumper.Dump(encounter));
-
-                    await encounter.RunEncounter();
-
-                    Console.WriteLine(ObjectDumper.Dump(encounter));
-
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(value: e);
-                    throw;
-                }
-
-                Console.WriteLine(value: "Press any key to exit...");
-                Console.ReadKey();
-            }
+            } while (Console.ReadKey(true).Key != ConsoleKey.Escape);
         }
 
-        private static async Task<IActor> GetRandomActor(ILifetimeScope scope, int characterLevel)
+        private static async Task<IActor> GetRandomActor(ILifetimeScope scope, int characterLevel, string name)
         {
             // This is an oversimplification for testing purposes... Don't take it too seriously. Or work too hard on it.
             var actorFactory = scope.Resolve<Actor.Factory>();
@@ -80,6 +85,7 @@ namespace DnDSimulator
             var hitPoints = await GetHitPoints(scope, constitution, characterLevel);
 
             return actorFactory(
+                name: name,
                 armorClass: GetPossibleArmorClass(strength, dexterity),
                 currentHitPoints: hitPoints,
                 maxHitPoints: hitPoints,

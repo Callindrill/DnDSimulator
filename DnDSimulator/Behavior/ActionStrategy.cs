@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using DnDSimulator.Encounter;
@@ -23,6 +24,7 @@ namespace DnDSimulator.Behavior
                 .SelectMany(p => p)
                 .FirstOrDefault(a => a.HitPoints.CurrentHitPoints > 0);
 
+            if (chosenOpponent == null) return default;
             return new ActionDecision()
             {
                 ActionType = ActionType.Attack,
